@@ -1,47 +1,41 @@
 package com.sparta.blogproj.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sparta.blogproj.dto.CommentRequestDto;
+import com.sparta.blogproj.dto.CommentUpdateDto;
 import com.sparta.blogproj.dto.PostRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity // JPA가 관리할 수 있는 Entity 클래스 지정
 @Getter
 @Setter
-@Table(name = "post") // 매핑할 테이블의 이름을 지정
+@Table(name = "comment") // 매핑할 테이블의 이름을 지정
 @NoArgsConstructor
-public class Post extends Timestamped {
+public class Comment extends Timestamped  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "content", nullable = false)
     private String content;
-    @Column(name = "title", nullable = false)
-    private String title;
-
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "post",cascade = {CascadeType.PERSIST,CascadeType.REMOVE})
-    @OrderBy("createdAt desc")
-    private List<Comment> commentList = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
 
-
-    public Post(PostRequestDto requestDto, User user) {
+    public Comment(CommentRequestDto requestDto, User user, Post post) {
         this.content = requestDto.getContent();
-        this.title = requestDto.getTitle();
         this.user = user;
+        this.post = post;
     }
 
-    public void update(PostRequestDto requestDto,User user) {
+    public void update(CommentUpdateDto requestDto) {
         this.content = requestDto.getContent();
-        this.title =requestDto.getTitle();
-        this.user = user;
     }
 }

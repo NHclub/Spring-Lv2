@@ -23,7 +23,7 @@ public class UserController {
     // 회원가입 API
     @PostMapping("/auth/signup")
     public ResponseEntity<StatusMessageDto> createUser(@RequestBody @Valid UserInformationDto requestDto) {
-        return userService.createUser(requestDto);
+        return userService.signup(requestDto);
     }
 
     // 로그인 API
