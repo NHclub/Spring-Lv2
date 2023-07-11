@@ -8,6 +8,9 @@ import com.sparta.blogproj.entity.Comment;
 import com.sparta.blogproj.entity.Post;
 import com.sparta.blogproj.entity.User;
 import com.sparta.blogproj.entity.UserRoleEnum;
+import com.sparta.blogproj.exception.CheckUserInformation;
+import com.sparta.blogproj.exception.TokenVerification;
+import com.sparta.blogproj.exception.UserVerification;
 import com.sparta.blogproj.jwt.JwtUtil;
 import com.sparta.blogproj.repository.CommentRepository;
 import com.sparta.blogproj.repository.PostRepository;
@@ -57,10 +60,10 @@ public class CommentService {
             if (user.getId().equals(userComment.getUser().getId())) {
                 userComment.update(requestDto);
                 return new CommentResponseDto(userComment);
-            }else{
-                throw new IllegalArgumentException("회원님의 댓글이 아닙니다.");
+            } else {
+                throw new UserVerification("작성자만 삭제/수정할 수 있습니다.");
             }
-        }else{
+        } else {
             userComment.update(requestDto);
             return new CommentResponseDto(userComment);
         }
@@ -76,14 +79,14 @@ public class CommentService {
             if (user.getId().equals(userComment.getUser().getId())) {
                 commentRepository.delete(userComment);
                 StatusMessageDto statusMessageDto = new StatusMessageDto("댓글 삭제 성공", HttpStatus.OK.value());
-                return new ResponseEntity<>(statusMessageDto,HttpStatus.OK);
-            }else{
-                throw new IllegalArgumentException("회원님의 댓글이 아닙니다.");
+                return new ResponseEntity<>(statusMessageDto, HttpStatus.OK);
+            } else {
+                throw new UserVerification("작성자만 삭제/수정할 수 있습니다.");
             }
-        }else{
+        } else {
             commentRepository.delete(userComment);
             StatusMessageDto statusMessageDto = new StatusMessageDto("댓글 삭제 성공", HttpStatus.OK.value());
-            return new ResponseEntity<>(statusMessageDto,HttpStatus.OK);
+            return new ResponseEntity<>(statusMessageDto, HttpStatus.OK);
         }
     }
 
@@ -94,9 +97,9 @@ public class CommentService {
             Claims claims = jwtUtil.getUserInfoFromToken(token);
             String username = claims.get("sub", String.class);
             return userRepository.findByUsername(username)
-                    .orElseThrow(() -> new NoSuchElementException("사용자를 찾을 수 없습니다."));
+                    .orElseThrow(() -> new CheckUserInformation("회원을 찾을 수 없습니다."));
         } else {
-            throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
+            throw new TokenVerification("토큰이 유효하지 않습니다.");
         }
     }
 }

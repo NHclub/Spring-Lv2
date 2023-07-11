@@ -7,6 +7,9 @@ import com.sparta.blogproj.dto.StatusMessageDto;
 import com.sparta.blogproj.entity.Post;
 import com.sparta.blogproj.entity.User;
 import com.sparta.blogproj.entity.UserRoleEnum;
+import com.sparta.blogproj.exception.CheckUserInformation;
+import com.sparta.blogproj.exception.TokenVerification;
+import com.sparta.blogproj.exception.UserVerification;
 import com.sparta.blogproj.jwt.JwtUtil;
 import com.sparta.blogproj.repository.PostRepository;
 import com.sparta.blogproj.repository.UserRepository;
@@ -73,13 +76,14 @@ public class PostService {
                 userPost.update(requestDto, user);
                 return new PostResponseDto(userPost);
             } else {
-                throw new IllegalArgumentException("회원님의 게시글이 아닙니다.");
+                throw new UserVerification("작성자만 삭제/수정할 수 있습니다.");
             }
         } else {
             userPost.update(requestDto, user);
             return new PostResponseDto(userPost);
         }
     }
+
 
     // 게시글 삭제
     @Transactional
@@ -93,7 +97,7 @@ public class PostService {
                 StatusMessageDto statusMessageDto = new StatusMessageDto("게시글 삭제 성공", HttpStatus.OK.value());
                 return new ResponseEntity<>(statusMessageDto, HttpStatus.OK);
             } else {
-                throw new IllegalArgumentException("회원님의 게시글이 아닙니다.");
+                throw new UserVerification("작성자만 삭제/수정할 수 있습니다.");
             }
         } else {
             postRepository.delete(userPost);
@@ -110,9 +114,9 @@ public class PostService {
             Claims claims = jwtUtil.getUserInfoFromToken(token);
             String username = claims.get("sub", String.class);
             return userRepository.findByUsername(username)
-                    .orElseThrow(() -> new NoSuchElementException("사용자를 찾을 수 없습니다."));
+                    .orElseThrow(() -> new CheckUserInformation("회원을 찾을 수 없습니다."));
         } else {
-            throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
+            throw new TokenVerification("토큰이 유효하지 않습니다.");
         }
     }
 

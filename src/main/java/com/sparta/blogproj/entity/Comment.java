@@ -1,9 +1,7 @@
 package com.sparta.blogproj.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparta.blogproj.dto.CommentRequestDto;
 import com.sparta.blogproj.dto.CommentUpdateDto;
-import com.sparta.blogproj.dto.PostRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +12,7 @@ import lombok.Setter;
 @Setter
 @Table(name = "comment") // 매핑할 테이블의 이름을 지정
 @NoArgsConstructor
-public class Comment extends Timestamped  {
+public class Comment extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

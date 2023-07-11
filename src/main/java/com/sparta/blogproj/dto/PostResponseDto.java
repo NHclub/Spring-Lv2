@@ -1,6 +1,5 @@
 package com.sparta.blogproj.dto;
 
-import com.sparta.blogproj.entity.Comment;
 import com.sparta.blogproj.entity.Post;
 import lombok.Getter;
 
